@@ -1,6 +1,6 @@
 # CMake entry point
 cmake_minimum_required (VERSION 2.6)
-project (MyFramework)
+project (LavendFramework)
 
 if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
 	message( FATAL_ERROR "Please select another Build Directory ! (and give it a clever name, like 'build')" )
