@@ -65,10 +65,42 @@ set(ALL_GRAPHICS_LIBS
 add_library(common # ar rcs libcommon.a
 	common/camera.h
 	common/camera.cpp
+	
 	common/renderer.h
 	common/renderer.cpp
+	
 	common/sprite.h
 	common/sprite.cpp
+	
+	common/entity.h
+	common/entity.cpp
+	
+	# common/mesh.h
+	# common/mesh.cpp
+	
+	# common/texture.h
+	# common/texture.cpp
+	
+	# common/shader.h
+	# common/shader.cpp
+	
+	# common/scene.h
+	# common/scene.cpp
+	
+	# common/input.h
+	# common/input.cpp
+	
+	# common/text.h
+	# common/text.cpp
+	
+	# common/resourcemanager.h
+	# common/resourcemanager.cpp
+	
+	# common/vector2.h
+	
+	# common/gridmap.h
+	# common/gridmap.cpp
+	
 )
 
 # Demo
