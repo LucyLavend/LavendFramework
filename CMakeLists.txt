@@ -2,6 +2,10 @@
 cmake_minimum_required (VERSION 2.6)
 project (LavendFramework)
 
+OPTION(USE_OPENAL "Use OpenAL library" ON)
+
+OPTION(MAKE_VIXEL "Make Vixel game" ON)
+
 if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
 	message( FATAL_ERROR "Please select another Build Directory ! (and give it a clever name, like 'build')" )
 endif()
@@ -28,7 +32,7 @@ endif(UNIX)
 
 if(WIN32)
 	# Create a group for Visual Studio
-	SOURCE_GROUP(common REGULAR_EXPRESSION ".*/common/.*" )
+	SOURCE_GROUP(lavendframework REGULAR_EXPRESSION ".*/lavendframework/.*" )
 	# suppress pedantic warnings
 	add_definitions( "/W1 /D_CRT_SECURE_NO_WARNINGS /wd4514 /nologo" )
 endif(WIN32)
@@ -48,6 +52,7 @@ include_directories( # g++ -Ipath/to/headerfiles
 	external/glfw-3.3/include/
 	external/glm-0.9.9.2/
 	external/glew-1.9.0/include/
+	external/openal/include/
 	.
 )
 
@@ -61,45 +66,45 @@ set(ALL_GRAPHICS_LIBS
 	GLEW_190
 )
 
-# Common (libcommon.a)
-add_library(common # ar rcs libcommon.a
-	common/camera.h
-	common/camera.cpp
+# lavendframework (liblavendframework.a)
+add_library(lavendframework # ar rcs liblavendframework.a
+	lavendframework/camera.h
+	lavendframework/camera.cpp
 	
-	common/renderer.h
-	common/renderer.cpp
+	lavendframework/renderer.h
+	lavendframework/renderer.cpp
 	
-	common/sprite.h
-	common/sprite.cpp
+	lavendframework/sprite.h
+	lavendframework/sprite.cpp
 	
-	common/entity.h
-	common/entity.cpp
+	lavendframework/entity.h
+	lavendframework/entity.cpp
 	
-	# common/mesh.h
-	# common/mesh.cpp
+	# lavendframework/mesh.h
+	# lavendframework/mesh.cpp
 	
-	# common/texture.h
-	# common/texture.cpp
+	# lavendframework/texture.h
+	# lavendframework/texture.cpp
 	
-	# common/shader.h
-	# common/shader.cpp
+	# lavendframework/shader.h
+	# lavendframework/shader.cpp
 	
-	# common/scene.h
-	# common/scene.cpp
+	# lavendframework/scene.h
+	# lavendframework/scene.cpp
 	
-	# common/input.h
-	# common/input.cpp
+	# lavendframework/input.h
+	# lavendframework/input.cpp
 	
-	# common/text.h
-	# common/text.cpp
+	# lavendframework/text.h
+	# lavendframework/text.cpp
 	
-	# common/resourcemanager.h
-	# common/resourcemanager.cpp
+	# lavendframework/resourcemanager.h
+	# lavendframework/resourcemanager.cpp
 	
-	# common/vector2.h
+	# lavendframework/vector2.h
 	
-	# common/gridmap.h
-	# common/gridmap.cpp
+	# lavendframework/gridmap.h
+	# lavendframework/gridmap.cpp
 	
 )
 
@@ -107,8 +112,8 @@ add_library(common # ar rcs libcommon.a
 add_executable(demo # g++ demo/demo.cpp -o demo
 	demo/demo.cpp
 )
-target_link_libraries(demo # g++ -lcommon
-	common
+target_link_libraries(demo # g++ -llavendframework
+	lavendframework
 	${ALL_GRAPHICS_LIBS}
 )
 # Copy assets and shaders to the build directory
@@ -118,6 +123,62 @@ file(
 	DESTINATION ${CMAKE_BINARY_DIR}
 )
 file(
-	COPY common/shaders
+	COPY lavendframework/shaders
 	DESTINATION ${CMAKE_BINARY_DIR}
 )
+
+####################################################################
+# OpenAL                                                           #
+####################################################################
+IF(USE_OPENAL)
+	add_subdirectory (external/openal)
+	include_directories(
+		${CMAKE_SOURCE_DIR}/external/openal/include/
+	)
+
+	link_directories(
+		${CMAKE_SOURCE_DIR}/external/openal/
+	)
+
+	IF(WIN32)
+		SET(OPENAL OpenAL32)
+	ELSE()
+		SET(OPENAL openal)
+	ENDIF()
+ENDIF()
+
+####################################################################
+# vixel                                                            #
+####################################################################
+IF(MAKE_VIXEL)
+	add_executable(vixel
+		vixel/main.cpp
+		vixel/character.cpp
+		vixel/character.h
+		vixel/home.cpp
+		vixel/home.h
+		vixel/basicentity.cpp
+		vixel/basicentity.h
+		vixel/superscene.cpp
+		vixel/superscene.h
+		vixel/game.cpp
+		vixel/game.h
+		vixel/audio/audio.cpp
+		vixel/audio/audio.h
+		vixel/audio/sound.cpp
+		vixel/audio/sound.h
+		vixel/audio/wav.cpp
+		vixel/audio/wav.h
+	)
+	target_link_libraries(vixel
+		${ALL_GRAPHICS_LIBS}
+		${OPENAL}
+	)
+	# Copy assets to the build directory
+	file(
+		COPY vixel/assets
+		DESTINATION ${CMAKE_BINARY_DIR}
+	)
+ENDIF()
+
+####################################################################
