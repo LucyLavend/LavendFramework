@@ -5,9 +5,9 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
-#include <common/renderer.h>
-#include <common/camera.h>
-#include <common/sprite.h>
+#include <lavendframework/renderer.h>
+#include <lavendframework/camera.h>
+#include <lavendframework/sprite.h>
 
 int main( void )
 {

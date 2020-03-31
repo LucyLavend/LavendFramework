@@ -13,7 +13,7 @@
 #define TIMER_H_
 
 // Include GLFW
-#include <glfw3.h>
+#include <GLFW/glfw3.h>
 
 /// @brief The Timer class keeps track of time.
 class Timer

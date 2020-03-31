@@ -7,8 +7,8 @@
  */
 
 #include <iostream>
-#include <singleton.h>
-#include <rt2d/input.h>
+#include <lavendframework/singleton.h>
+#include <lavendframework/input.h>
 
 Input::Input()
 {

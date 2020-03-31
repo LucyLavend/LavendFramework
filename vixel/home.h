@@ -9,7 +9,7 @@
 #define HOME_H
 
 #include <vector>
-#include <vectorx.h>
+#include <lavendframework/vectorx.h>
 
 class Home
 {

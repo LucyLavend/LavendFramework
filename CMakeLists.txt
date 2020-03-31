@@ -80,31 +80,44 @@ add_library(lavendframework # ar rcs liblavendframework.a
 	lavendframework/entity.h
 	lavendframework/entity.cpp
 	
-	# lavendframework/mesh.h
-	# lavendframework/mesh.cpp
+	lavendframework/mesh.h
+	lavendframework/mesh.cpp
 	
-	# lavendframework/texture.h
-	# lavendframework/texture.cpp
+	lavendframework/texture.h
+	lavendframework/texture.cpp
 	
-	# lavendframework/shader.h
-	# lavendframework/shader.cpp
+	lavendframework/shader.h
+	lavendframework/shader.cpp
 	
-	# lavendframework/scene.h
-	# lavendframework/scene.cpp
+	lavendframework/scene.h
+	lavendframework/scene.cpp
 	
-	# lavendframework/input.h
-	# lavendframework/input.cpp
+	lavendframework/input.h
+	lavendframework/input.cpp
 	
-	# lavendframework/text.h
-	# lavendframework/text.cpp
+	lavendframework/core.h
+	lavendframework/core.cpp
 	
-	# lavendframework/resourcemanager.h
-	# lavendframework/resourcemanager.cpp
+	lavendframework/line.h
+	lavendframework/line.cpp
 	
-	# lavendframework/vector2.h
+	lavendframework/resourcemanager.h
+	lavendframework/resourcemanager.cpp
 	
-	# lavendframework/gridmap.h
-	# lavendframework/gridmap.cpp
+	lavendframework/pointx.h
+	lavendframework/vectorx.h
+	lavendframework/singleton.h
+	lavendframework/lavendframeworkconfig.h
+	lavendframework/color.h
+	
+	lavendframework/timer.h
+	lavendframework/timer.cpp
+	
+	lavendframework/text.h
+	lavendframework/text.cpp
+	
+	lavendframework/canvas.h
+	lavendframework/canvas.cpp
 	
 )
 

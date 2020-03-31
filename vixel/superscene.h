@@ -9,8 +9,8 @@
 #define SUPERSCENE_H
 
 #include <vector>
-#include <rt2d/scene.h>
-#include <rt2d/text.h>
+#include <lavendframework/scene.h>
+#include <lavendframework/text.h>
 #include "basicentity.h"
 
 class SuperScene: public Scene

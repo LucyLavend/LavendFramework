@@ -9,7 +9,7 @@
 #define CHARACTER_H
 
 #include <vector>
-#include <vectorx.h>
+#include <lavendframework/vectorx.h>
 
 class Character
 {

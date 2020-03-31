@@ -14,9 +14,9 @@
 #define INPUT_H
 
 // Include GLFW
-#include <glfw3.h>
+#include <GLFW/glfw3.h>
 
-#include <rt2dconfig.h>
+#include <lavendframework/lavendframeworkconfig.h>
 
 /*
 #define 	GLFW_MOUSE_BUTTON_1   0
