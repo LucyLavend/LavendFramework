@@ -53,11 +53,11 @@ include_directories( # g++ -Ipath/to/headerfiles
 	external/glm-0.9.9.2/
 	external/glew-1.9.0/include/
 	external/openal/include/
-	.
+	/.
 )
 
 link_directories( # g++ -Lpath/to/library
-
+	
 )
 
 set(ALL_GRAPHICS_LIBS
@@ -66,7 +66,7 @@ set(ALL_GRAPHICS_LIBS
 	GLEW_190
 )
 
-# lavendframework (liblavendframework.a)
+# LavendFramework (liblavendframework.a)
 add_library(lavendframework # ar rcs liblavendframework.a
 	lavendframework/camera.h
 	lavendframework/camera.cpp
@@ -77,47 +77,47 @@ add_library(lavendframework # ar rcs liblavendframework.a
 	lavendframework/sprite.h
 	lavendframework/sprite.cpp
 	
-	lavendframework/entity.h
-	lavendframework/entity.cpp
+	#lavendframework/entity.h
+	#lavendframework/entity.cpp
 	
-	lavendframework/mesh.h
-	lavendframework/mesh.cpp
+	#lavendframework/mesh.h
+	#lavendframework/mesh.cpp
 	
-	lavendframework/texture.h
-	lavendframework/texture.cpp
+	#lavendframework/texture.h
+	#lavendframework/texture.cpp
 	
-	lavendframework/shader.h
-	lavendframework/shader.cpp
+	#lavendframework/shader.h
+	#lavendframework/shader.cpp
 	
-	lavendframework/scene.h
-	lavendframework/scene.cpp
+	#lavendframework/scene.h
+	#lavendframework/scene.cpp
 	
-	lavendframework/input.h
-	lavendframework/input.cpp
+	#lavendframework/input.h
+	#lavendframework/input.cpp
 	
-	lavendframework/core.h
-	lavendframework/core.cpp
+	#lavendframework/core.h
+	#lavendframework/core.cpp
 	
-	lavendframework/line.h
-	lavendframework/line.cpp
+	#lavendframework/line.h
+	#lavendframework/line.cpp
 	
-	lavendframework/resourcemanager.h
-	lavendframework/resourcemanager.cpp
+	#lavendframework/resourcemanager.h
+	#lavendframework/resourcemanager.cpp
 	
-	lavendframework/pointx.h
-	lavendframework/vectorx.h
-	lavendframework/singleton.h
-	lavendframework/lavendframeworkconfig.h
-	lavendframework/color.h
+	#lavendframework/pointx.h
+	#lavendframework/vectorx.h
+	#lavendframework/singleton.h
+	#lavendframework/lavendframeworkconfig.h
+	#lavendframework/color.h
 	
-	lavendframework/timer.h
-	lavendframework/timer.cpp
+	#lavendframework/timer.h
+	#lavendframework/timer.cpp
 	
-	lavendframework/text.h
-	lavendframework/text.cpp
+	#lavendframework/text.h
+	#lavendframework/text.cpp
 	
-	lavendframework/canvas.h
-	lavendframework/canvas.cpp
+	#lavendframework/canvas.h
+	#lavendframework/canvas.cpp
 	
 )
 
@@ -160,38 +160,4 @@ IF(USE_OPENAL)
 	ENDIF()
 ENDIF()
 
-####################################################################
-# vixel                                                            #
-####################################################################
-IF(MAKE_VIXEL)
-	add_executable(vixel
-		vixel/main.cpp
-		vixel/character.cpp
-		vixel/character.h
-		vixel/home.cpp
-		vixel/home.h
-		vixel/basicentity.cpp
-		vixel/basicentity.h
-		vixel/superscene.cpp
-		vixel/superscene.h
-		vixel/game.cpp
-		vixel/game.h
-		vixel/audio/audio.cpp
-		vixel/audio/audio.h
-		vixel/audio/sound.cpp
-		vixel/audio/sound.h
-		vixel/audio/wav.cpp
-		vixel/audio/wav.h
-	)
-	target_link_libraries(vixel
-		${ALL_GRAPHICS_LIBS}
-		${OPENAL}
-	)
-	# Copy assets to the build directory
-	file(
-		COPY vixel/assets
-		DESTINATION ${CMAKE_BINARY_DIR}
-	)
-ENDIF()
 
-####################################################################

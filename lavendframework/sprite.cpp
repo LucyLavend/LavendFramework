@@ -1,178 +1,190 @@
-/**
- * This file is part of RT2D, a 2D OpenGL framework.
- *
- * - Copyright 2015 Rik Teerling <rik@onandoffables.com>
- *   - Initial commit
- */
-
 #include <iostream>
+#include <cstdio>
 
-#include <lavendframework/lavendframeworkconfig.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/euler_angles.hpp>
+
 #include <lavendframework/sprite.h>
 
-Sprite::Sprite()
+
+Sprite::Sprite(const std::string& imagepath)
 {
-	_texturename = AUTOGENWHITE;
+	// these will be set correctly in loadTGA()
+	_width = 0;
+	_height = 0;
 
-	_fragmentshader = SPRITEFRAGMENTSHADER;
-	_vertexshader = SPRITEVERTEXSHADER;
+	// Load image as texture
+	_texture = loadTGA(imagepath);
 
-	spriteposition = Point3(0.0f, 0.0f, 0.0f); // spritebatch only
-	spriterotation = Point3(0.0f, 0.0f, 0.0f); // spritebatch only
-	spritescale = Point3(1.0f, 1.0f, 1.0f); // spritebatch only
+	// Our vertices. Tree consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
+	// A sprite has 1 face (quad) with 2 triangles each, so this makes 1*2=2 triangles, and 2*3 vertices
+	GLfloat g_vertex_buffer_data[18] = {
+		 0.5f * _width, -0.5f * _height, 0.0f,
+		-0.5f * _width, -0.5f * _height, 0.0f,
+		-0.5f * _width,  0.5f * _height, 0.0f,
 
-	pivot = Point2(0.5f, 0.5f);
-	uvdim = Point2(1.0f, 1.0f);
-	uvoffset = Point2(0.0f, 0.0f);
-	size = Point2(0, 0);
+		-0.5f * _width,  0.5f * _height, 0.0f,
+		 0.5f * _width,  0.5f * _height, 0.0f,
+		 0.5f * _width, -0.5f * _height, 0.0f
+	};
 
-	for (size_t i = 0; i < 8; i++) {
-		customParams[i] = Point3(0.0f, 0.0f, 0.0f);
-	}
+	// Two UV coordinates for each vertex.
+	GLfloat g_uv_buffer_data[12] = {
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f,
 
-	_palette = nullptr;
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f
+	};
 
-	_frame = 0;
+	glGenBuffers(1, &_vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, _vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-	_filter = DEFAULTFILTER;
-	_wrap = DEFAULTWRAP;
-
-	_dyntexture = nullptr;
-	_dynamic = false;
-
-	_circlemesh = 0; // false
-	_which = -1; // disabled
-
-	_useculling = 0;
-
-	color = RGBAColor(255, 255, 255, 255);
+	glGenBuffers(1, &_uvbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, _uvbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
 }
 
 Sprite::~Sprite()
 {
-	//if (_dyntexture != nullptr) {
-	// TODO this leaks the dynamic textures (get rid of !dynamic)
-	if (_dyntexture != nullptr && !_dynamic) {
-		delete _dyntexture;
-		_dyntexture = nullptr;
+	glDeleteBuffers(1, &_vertexbuffer);
+	glDeleteBuffers(1, &_uvbuffer);
+	glDeleteTextures(1, &_texture); // texture created in loadTGA() with glGenTextures()
+}
+
+GLuint Sprite::loadTGA(const std::string& imagepath)
+{
+	std::cout << "Loading TGA: " << imagepath << std::endl;
+
+	FILE *file;
+	unsigned char type[4];
+	unsigned char info[6];
+
+	file = fopen(imagepath.c_str(), "rb");
+
+	if (!file) {
+		std::cout << "error: unable to open file" << std::endl;
+		return 0;
 	}
 
-	if (_palette != nullptr) {
-		delete _palette;
-		_palette = nullptr;
-	}
-}
+	if (!fread (&type, sizeof (char), 3, file)) return 0;
+	fseek (file, 12, SEEK_SET);
+	if (!fread (&info, sizeof (char), 6, file)) return 0;
 
-void Sprite::setPalette(const std::string& filename)
-{
-	if (_palette != nullptr) {
-		delete _palette;
-		_palette = nullptr;
-	}
-	_palette = new Texture();
-	_palette->loadTGAImage(filename, 0, 0, 1); // filename, filter, wrap, dimension
-}
-
-void Sprite::setupSprite(const std::string& filename, float pivotx, float pivoty, float uvwidth, float uvheight)
-{
-	this->setupSprite(filename, pivotx, pivoty, uvwidth, uvheight, DEFAULTFILTER, DEFAULTWRAP);
-}
-
-void Sprite::setupCircleSprite(const std::string& filename, int radius, int segments)
-{
-	this->setupSegmentSprite(filename, radius, segments, -1);
-}
-
-void Sprite::setupSegmentSprite(const std::string& filename, int radius, int segments, int which)
-{
-	_texturename = filename;
-	_circlemesh = segments; // only a single segment (triangle)
-	_which = which; // which segment
-
-	_filter = DEFAULTFILTER;
-	_wrap = DEFAULTWRAP;
-
-	size.x = radius * 2;
-	size.y = radius * 2;
-}
-
-void Sprite::setupSprite(const std::string& filename, float pivotx, float pivoty, float uvwidth, float uvheight, int filter, int wrap)
-{
-	_texturename = filename;
-
-	_filter = filter;
-	_wrap = wrap;
-
-	pivot.x = pivotx;
-	pivot.y = pivoty;
-
-	// 1.00000 = 1x1 spritesheet (basic sprite)
-	// 0.50000 = 2x2 spritesheet
-	// 0.25000 = 4x4 spritesheet
-	// 0.12500 = 8x8 spritesheet
-	// 0.06250 = 16x16 spritesheet
-	// 0.03125 = 32x32 spritesheet
-	uvdim.x = uvwidth;
-	uvdim.y = uvheight;
-}
-
-void Sprite::setupSpriteByPixelBuffer(PixelBuffer* pixels)
-{
-	std::cout << "Sprite::setupSpriteByPixelBuffer() " <<  std::endl;
-	if (_dyntexture != nullptr) {
-		delete _dyntexture;
-		_dyntexture = nullptr;
+	//image type needs to be 2 (color) or 3 (grayscale)
+	if (type[1] != 0 || (type[2] != 2 && type[2] != 3))
+	{
+		std::cout << "error: image type neither color or grayscale" << std::endl;
+		fclose(file);
+		return 0;
 	}
 
-	_filter = pixels->filter;
-	_wrap = pixels->wrap;
+	unsigned char* data;
+	unsigned char bitdepth;
 
-	size.x = pixels->width;
-	size.y = pixels->height;
+	_width = info[0] + info[1] * 256;
+	_height = info[2] + info[3] * 256;
+	bitdepth = info[4] / 8;
 
-	_dyntexture = new Texture();
-	_dyntexture->createFromBuffer(pixels);
-	_dynamic = true;
-}
-
-void Sprite::setupSpriteTGAPixelBuffer(const std::string& filename, int filter, int wrap)
-{
-	std::cout << "Sprite::setupSpriteByPixelBuffer() " <<  std::endl;
-	if (_dyntexture != nullptr) {
-		delete _dyntexture;
-		_dyntexture = nullptr;
+	if (bitdepth != 1 && bitdepth != 3 && bitdepth != 4) {
+		std::cout << "bytecount not 1, 3 or 4" << std::endl;
+		fclose(file);
+		return 0;
 	}
 
-	_dyntexture = new Texture();
-	_dyntexture->loadTGAImage(filename, filter, wrap);
-	_dynamic = true;
-
-	size.x = (float) _dyntexture->width();
-	size.y = (float) _dyntexture->height();
-
-	_filter = filter;
-	_wrap = wrap;
-}
-
-int Sprite::frame(int f)
-{
-	int w = 1.0f / uvdim.x;
-	int h = 1.0f / uvdim.y;
-
-	if (f >= w*h) {
-		_frame = 0;
-		uvoffset.x = 0;
-		uvoffset.y = 0;
-		return _frame;
+	// Check if the image's width and height is a power of 2. No biggie, we can handle it.
+	if ((_width & (_width - 1)) != 0) {
+		std::cout << "warning: " << imagepath << "’s width is not a power of 2" << std::endl;
+	}
+	if ((_height & (_height - 1)) != 0) {
+		std::cout << "warning: " << imagepath << "’s height is not a power of 2" << std::endl;
+	}
+	if (_width != _height) {
+		std::cout << "warning: " << imagepath << " is not square" << std::endl;
 	}
 
-	int ypos=f/w;
-	int xpos=f%w;
+	unsigned int imagesize = _width * _height * bitdepth;
 
-	uvoffset.x = xpos * uvdim.x;
-	uvoffset.y = ypos * uvdim.y;
+	// Create a buffer
+	data = new unsigned char [imagesize];
 
-	_frame = f;
+	// Read the actual data from the file into the buffer
+	if (!fread(data, 1, imagesize, file)) return 0;
 
-	return _frame;
+	// Everything is in memory now, close the file
+	fclose(file);
+
+	// Create one OpenGL texture
+	// Be sure to also delete it from where you called this with glDeleteTextures()
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+
+	// "Bind" the newly created texture : all future texture functions will modify this texture
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	// filter the Texture
+	unsigned char filter = 1;
+	switch (filter) {
+		case 0:
+			// No filtering.
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			break;
+		case 1:
+			// Linear filtering.
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			break;
+		case 2:
+			// Bilinear filtering.
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			break;
+		case 3:
+			// Trilinear filtering.
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			break;
+		default:
+			// No filtering.
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			break;
+	}
+
+	// wrapping
+	// GL_REPEAT, GL_MIRRORED_REPEAT or GL_CLAMP_TO_EDGE
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	// handle transparency and grayscale and give the image to OpenGL
+	switch (bitdepth) {
+		case 4:
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
+			break;
+		case 3:
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+			break;
+		case 1:
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, _width, _height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
+			break;
+		default:
+			std::cout << "error: bitdepth not 4, 3, or 1" << std::endl;
+			break;
+	}
+
+	// OpenGL has now copied the data. Free our own version
+	delete [] data;
+
+	// Return the ID of the texture we just created
+	return textureID;
 }
