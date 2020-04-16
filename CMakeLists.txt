@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (LavendFramework)
 
-OPTION(USE_OPENAL "Use OpenAL library" ON)
+OPTION(USE_OPENAL "Use OpenAL library" OFF)
 
 OPTION(MAKE_VIXEL "Make Vixel game" ON)
 
@@ -53,7 +53,8 @@ include_directories( # g++ -Ipath/to/headerfiles
 	external/glm-0.9.9.2/
 	external/glew-1.9.0/include/
 	external/openal/include/
-	/.
+	lavendframework/
+	.
 )
 
 link_directories( # g++ -Lpath/to/library
