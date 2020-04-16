@@ -10,7 +10,6 @@
 
 #include <vector>
 #include <lavendframework/timer.h>
-#include <lavendframework/vectorx.h>
 #include <lavendframework/canvas.h>
 #include "superscene.h"
 #include "character.h"

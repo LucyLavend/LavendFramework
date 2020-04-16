@@ -10,7 +10,6 @@
 
 #include <vector>
 #include <lavendframework/scene.h>
-#include <lavendframework/text.h>
 #include "basicentity.h"
 
 class SuperScene: public Scene
@@ -27,7 +26,6 @@ public:
 protected:
 	unsigned int top_layer;
 	std::vector<BasicEntity*> layers;
-	std::vector<Text*> text;
 	void moveCamera(float deltaTime);
 
 private:
