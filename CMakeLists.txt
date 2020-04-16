@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (LavendFramework)
 
-OPTION(USE_OPENAL "Use OpenAL library" OFF)
+OPTION(USE_OPENAL "Use OpenAL library" ON)
 
 OPTION(MAKE_VIXEL "Make Vixel game" ON)
 
@@ -78,8 +78,14 @@ add_library(lavendframework # ar rcs liblavendframework.a
 	lavendframework/sprite.h
 	lavendframework/sprite.cpp
 	
-	#lavendframework/entity.h
-	#lavendframework/entity.cpp
+	lavendframework/core.h
+	lavendframework/core.cpp
+	
+	#lavendframework/scene.h
+	#lavendframework/scene.cpp
+	
+	lavendframework/entity.h
+	lavendframework/entity.cpp
 	
 	#lavendframework/mesh.h
 	#lavendframework/mesh.cpp
@@ -90,14 +96,8 @@ add_library(lavendframework # ar rcs liblavendframework.a
 	#lavendframework/shader.h
 	#lavendframework/shader.cpp
 	
-	#lavendframework/scene.h
-	#lavendframework/scene.cpp
-	
 	#lavendframework/input.h
 	#lavendframework/input.cpp
-	
-	#lavendframework/core.h
-	#lavendframework/core.cpp
 	
 	#lavendframework/line.h
 	#lavendframework/line.cpp
@@ -111,8 +111,8 @@ add_library(lavendframework # ar rcs liblavendframework.a
 	#lavendframework/lavendframeworkconfig.h
 	#lavendframework/color.h
 	
-	#lavendframework/timer.h
-	#lavendframework/timer.cpp
+	lavendframework/timer.h
+	lavendframework/timer.cpp
 	
 	#lavendframework/text.h
 	#lavendframework/text.cpp
@@ -160,5 +160,41 @@ IF(USE_OPENAL)
 		SET(OPENAL openal)
 	ENDIF()
 ENDIF()
+
+####################################################################
+# vixel                                                            #
+####################################################################
+IF(MAKE_VIXEL)
+	add_executable(vixel
+		vixel/main.cpp
+		vixel/character.cpp
+		vixel/character.h
+		vixel/home.cpp
+		vixel/home.h
+		vixel/basicentity.cpp
+		vixel/basicentity.h
+		vixel/superscene.cpp
+		vixel/superscene.h
+		vixel/game.cpp
+		vixel/game.h
+		vixel/audio/audio.cpp
+		vixel/audio/audio.h
+		vixel/audio/sound.cpp
+		vixel/audio/sound.h
+		vixel/audio/wav.cpp
+		vixel/audio/wav.h
+	)
+	target_link_libraries(vixel
+		${ALL_GRAPHICS_LIBS}
+		${OPENAL}
+	)
+	# Copy assets to the build directory
+	file(
+		COPY vixel/assets
+		DESTINATION ${CMAKE_BINARY_DIR}
+	)
+ENDIF()
+
+####################################################################
 
 
