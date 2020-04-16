@@ -9,6 +9,7 @@
 
 void computeMatricesFromInputs(GLFWwindow* window, float deltaTime);
 glm::mat4 getViewMatrix();
-glm::vec3 getCursor();
+glm::vec3 getCursorPos();
+glm::vec3 getCursorWorldPos();
 
 #endif

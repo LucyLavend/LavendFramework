@@ -5,18 +5,18 @@ glm::mat4 getViewMatrix(){
 	return viewMatrix;
 }
 
-glm::vec3 cursor = glm::vec3( 0, 0, 0 );
-glm::vec3 getCursor(){
+glm::vec3 cursor = glm::vec3(0, 0, 0);
+glm::vec3 cursorWorld = glm::vec3( 0, 0, 0 );
+
+glm::vec3 getCursorPos(){
 	return cursor;
+}
+glm::vec3 getCursorWorldPos() {
+	return cursorWorld;
 }
 
 void computeMatricesFromInputs(GLFWwindow* window, float deltaTime)
 {
-	// Get mouse position
-	double xpos, ypos;
-	glfwGetCursorPos(window, &xpos, &ypos);
-	cursor = glm::vec3( xpos, ypos, 0 );
-
 	// Right and Up vector
 	glm::vec3 right = glm::vec3(1, 0, 0);
 	glm::vec3 up = glm::vec3(0, -1, 0);
@@ -40,6 +40,12 @@ void computeMatricesFromInputs(GLFWwindow* window, float deltaTime)
 	if (glfwGetKey( window, GLFW_KEY_LEFT ) == GLFW_PRESS){
 		position -= right * deltaTime * speed;
 	}
+
+	// Get mouse position
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	cursor = glm::vec3(xpos, ypos, 0);
+	cursorWorld = glm::vec3(xpos + position.x, ypos + position.y, 0);
 
 	// View matrix
 	viewMatrix = glm::lookAt(
