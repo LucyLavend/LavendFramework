@@ -96,8 +96,8 @@ add_library(lavendframework # ar rcs liblavendframework.a
 	#lavendframework/shader.h
 	#lavendframework/shader.cpp
 	
-	#lavendframework/input.h
-	#lavendframework/input.cpp
+	lavendframework/input.h
+	lavendframework/input.cpp
 	
 	#lavendframework/line.h
 	#lavendframework/line.cpp
@@ -107,7 +107,7 @@ add_library(lavendframework # ar rcs liblavendframework.a
 	
 	#lavendframework/pointx.h
 	#lavendframework/vectorx.h
-	#lavendframework/singleton.h
+	lavendframework/singleton.h
 	#lavendframework/lavendframeworkconfig.h
 	#lavendframework/color.h
 	
@@ -125,6 +125,7 @@ add_library(lavendframework # ar rcs liblavendframework.a
 # Demo
 add_executable(demo # g++ demo/demo.cpp -o demo
 	demo/demo.cpp
+	demo/demo.h
 )
 target_link_libraries(demo # g++ -llavendframework
 	lavendframework

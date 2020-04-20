@@ -5,9 +5,12 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
+//#include <demo/demo.h>
+#include <lavendframework/core.h>
 #include <lavendframework/renderer.h>
 #include <lavendframework/camera.h>
 #include <lavendframework/sprite.h>
+#include <lavendframework/singleton.h>
 
 int main( void )
 {
@@ -16,6 +19,7 @@ int main( void )
 	int h = 100;
 	int gridSize = 16;
 	int tileSize = 128;
+	Input* _input = Singleton<Input>::instance();
 	Sprite* gear = new Sprite("assets/gear.tga");
 	std::vector<Sprite*> gearGrid(w * h, gear);
 
@@ -58,6 +62,10 @@ int main( void )
 	} // Check if the ESC key was pressed or the window was closed
 	while( glfwGetKey(renderer.window(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
 		   glfwWindowShouldClose(renderer.window()) == 0 );
+
+	if (_input()->getKeyDown(KeyCode(91))) {
+
+	}
 
 	delete gear;
 

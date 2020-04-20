@@ -8,7 +8,7 @@
 #include <string>
 
 #include <lavendframework/renderer.h>
-//#include <lavendframework/input.h>
+#include <lavendframework/input.h>
 #include <lavendframework/entity.h>
 
 /// @brief The Core class handles updating and rendering of your Entities.
