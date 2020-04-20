@@ -2,7 +2,7 @@
 
 Entity::Entity()
 {
-	
+	_input = Singleton<Input>::instance();
 }
 
 Entity::~Entity()

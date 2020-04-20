@@ -63,8 +63,8 @@ int main( void )
 	while( glfwGetKey(renderer.window(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
 		   glfwWindowShouldClose(renderer.window()) == 0 );
 
-	if (_input()->getKeyDown(KeyCode(91))) {
-
+	if (_input->getKeyDown(KeyCode('w'))) {
+		printf("test");
 	}
 
 	delete gear;
